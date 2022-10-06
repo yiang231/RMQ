@@ -14,8 +14,45 @@
                                password="${rabbitmq.password}"
                                virtual-host="${rabbitmq.virtual-host}"/>
     <!--配置监听器-->
-    <bean class="com.atguigu.listener.SimpleListener" id="springQueueListener"/>
+    <!--simple-->
+    <bean class="com.atguigu.listener.SimpleListener" id="simpleListener"/>
+    <!--work-->
+    <bean class="com.atguigu.listener.WorkListener1" id="workListener1"/>
+    <bean class="com.atguigu.listener.WorkListener2" id="workListener2"/>
+    <!--fanout-->
+    <bean class="com.atguigu.listener.FanoutListener1" id="fanoutListener1"/>
+    <bean class="com.atguigu.listener.FanoutListener2" id="fanoutListener2"/>
+    <!--routing-->
+    <bean class="com.atguigu.listener.RoutingListener1" id="routingListener1"/>
+    <bean class="com.atguigu.listener.RoutingListener2" id="routingListener2"/>
+    <bean class="com.atguigu.listener.RoutingListener3" id="routingListener3"/>
+    <bean class="com.atguigu.listener.RoutingListener4" id="routingListener4"/>
+    <!--topic-->
+    <bean class="com.atguigu.listener.TopicListener1" id="topicListener1"/>
+    <bean class="com.atguigu.listener.TopicListener2" id="topicListener2"/>
+    <bean class="com.atguigu.listener.TopicListener3" id="topicListener3"/>
+    <bean class="com.atguigu.listener.TopicListener4" id="topicListener4"/>
+    <bean class="com.atguigu.listener.TopicListener5" id="topicListener5"/>
+    <!--配置监听器容器-->
     <rabbit:listener-container connection-factory="connectionFactory">
-        <rabbit:listener ref="springQueueListener" queue-names="queue"/>
+        <!--simple-->
+        <rabbit:listener ref="simpleListener" queue-names="queue"/>
+        <!--work-->
+        <rabbit:listener ref="workListener1" queue-names="work"/>
+        <rabbit:listener ref="workListener2" queue-names="work"/>
+        <!--fanout-->
+        <rabbit:listener ref="fanoutListener1" queue-names="queue1"/>
+        <rabbit:listener ref="fanoutListener2" queue-names="queue2"/>
+        <!--routing-->
+        <rabbit:listener ref="routingListener1" queue-names="queue5"/>
+        <rabbit:listener ref="routingListener2" queue-names="queue6"/>
+        <rabbit:listener ref="routingListener3" queue-names="queue7"/>
+        <rabbit:listener ref="routingListener4" queue-names="queue8"/>
+        <!--topic-->
+        <rabbit:listener ref="topicListener1" queue-names="queue9"/>
+        <rabbit:listener ref="topicListener2" queue-names="queue10"/>
+        <rabbit:listener ref="topicListener3" queue-names="queue11"/>
+        <rabbit:listener ref="topicListener4" queue-names="queue12"/>
+        <rabbit:listener ref="topicListener5" queue-names="queue13"/>
     </rabbit:listener-container>
 </beans>

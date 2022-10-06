@@ -13,11 +13,57 @@
                                username="${rabbitmq.username}"
                                password="${rabbitmq.password}"
                                virtual-host="${rabbitmq.virtual-host}"/>
-    <!--    创建底层rabbitmq bean-->
+    <!--创建底层rabbitmq bean,管理交换机和队列-->
     <rabbit:admin connection-factory="connectionFactory"/>
-    <!--编辑配置信息-->
-    <!--队列信息-->
+    <!-- 配置交换机和队列及其绑定关系-->
+    <!--
+    <bean id="" name=""> id和name没有区别
+    <rabbit:queue id="" name="">
+    id:创建的Queue Bean的id，放入到Spring IoC容器，使用bean的时候使用id
+    name：rabbitmq中队列的名称
+    让id和name相同即可
+    -->
+    <!--simple-->
     <rabbit:queue name="queue" id="queue" auto-declare="true"/>
+    <!--work-->
+    <rabbit:queue name="work" id="work" auto-declare="true"/>
+    <!--fanout-->
+    <rabbit:queue id="queue1" name="queue1" auto-declare="true"/>
+    <rabbit:queue id="queue2" name="queue2" auto-declare="true"/>
+    <rabbit:fanout-exchange name="fanoutExchange" id="fanoutExchange" auto-declare="true">
+        <rabbit:bindings>
+            <rabbit:binding queue="queue1"/>
+            <rabbit:binding queue="queue2"/>
+        </rabbit:bindings>
+    </rabbit:fanout-exchange>
+    <!--routing-->
+    <rabbit:queue id="queue5" name="queue5" auto-declare="true"/>
+    <rabbit:queue id="queue6" name="queue6" auto-declare="true"/>
+    <rabbit:queue id="queue7" name="queue7" auto-declare="true"/>
+    <rabbit:queue id="queue8" name="queue8" auto-declare="true"/>
+    <rabbit:direct-exchange name="routingExchange" id="routingExchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="queue5" key="error"/>
+            <rabbit:binding queue="queue6" key="info"/>
+            <rabbit:binding queue="queue7" key="warning"/>
+            <rabbit:binding queue="queue8" key="fatal"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+    <!--topic-->
+    <rabbit:queue id="queue9" name="queue9" auto-declare="true"/>
+    <rabbit:queue id="queue10" name="queue10" auto-declare="true"/>
+    <rabbit:queue id="queue11" name="queue11" auto-declare="true"/>
+    <rabbit:queue id="queue12" name="queue12" auto-declare="true"/>
+    <rabbit:queue id="queue13" name="queue13" auto-declare="true"/>
+    <rabbit:topic-exchange name="topicExchange" id="topicExchange">
+        <rabbit:bindings>
+            <rabbit:binding pattern="apple.orange.banana" queue="queue9"/>
+            <rabbit:binding pattern="apple.orange.rabbit" queue="queue10"/>
+            <rabbit:binding pattern="lazy" queue="queue11"/>
+            <rabbit:binding pattern="lazy." queue="queue12"/>
+            <rabbit:binding pattern="lazy.hungry.singleton" queue="queue13"/>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
     <!--定义模板-->
     <rabbit:template id="rabbitTemplate" connection-factory="connectionFactory"/>
 </beans>

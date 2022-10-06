@@ -1,5 +1,6 @@
-package com.atguigu.rabbitmq.simple;
+package com.atguigu.rabbitmq.fanout;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -21,13 +22,19 @@ public class Producer {
 		Connection connection = factory.newConnection();
 		//创建频道
 		Channel channel = connection.createChannel();
+		//创建交换机
+		String fanoutExchange = "fanoutExchange";
+		channel.exchangeDeclare(fanoutExchange, BuiltinExchangeType.FANOUT, true, false, false, null);
 		//创建队列
-		channel.queueDeclare("queue", true, false, false, null);
-		//创建消息
-		String msg = "Hello World12344431";
+		channel.queueDeclare("queue1", true, false, false, null);
+		channel.queueDeclare("queue2", true, false, false, null);
+		//绑定交换机和队列
+		channel.queueBind("queue1", fanoutExchange, "");
+		channel.queueBind("queue2", fanoutExchange, "");
 		//发送消息
-		channel.basicPublish("", "queue", null, msg.getBytes());
-		System.out.println("已发送消息" + msg);
+		String msg = "hello world";
+		channel.basicPublish(fanoutExchange, "", null, msg.getBytes());
+		System.out.println("发送完毕");
 		//关闭资源
 		channel.close();
 		connection.close();

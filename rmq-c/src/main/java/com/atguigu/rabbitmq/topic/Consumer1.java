@@ -1,13 +1,16 @@
-package com.atguigu.rabbitmq.simple;
+package com.atguigu.rabbitmq.topic;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class Producer {
+public class Consumer1 {
 	public static void main(String[] args) throws IOException, TimeoutException {
 		//创建连接工厂
 		ConnectionFactory factory = new ConnectionFactory();
@@ -21,15 +24,14 @@ public class Producer {
 		Connection connection = factory.newConnection();
 		//创建频道
 		Channel channel = connection.createChannel();
-		//创建队列
-		channel.queueDeclare("queue", true, false, false, null);
-		//创建消息
-		String msg = "Hello World12344431";
-		//发送消息
-		channel.basicPublish("", "queue", null, msg.getBytes());
-		System.out.println("已发送消息" + msg);
-		//关闭资源
-		channel.close();
-		connection.close();
+		//接收消息
+		DefaultConsumer callback = new DefaultConsumer(channel) {
+			@Override
+			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+				System.out.println("envelope = " + envelope + ", body = " + new String(body));
+				System.out.println("=================");
+			}
+		};
+		channel.basicConsume("queue1", true, callback);
 	}
 }

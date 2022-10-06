@@ -1,4 +1,4 @@
-package com.atguigu.rabbitmq.simple;
+package com.atguigu.rabbitmq.work;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -21,13 +21,14 @@ public class Producer {
 		Connection connection = factory.newConnection();
 		//创建频道
 		Channel channel = connection.createChannel();
-		//创建队列
-		channel.queueDeclare("queue", true, false, false, null);
-		//创建消息
-		String msg = "Hello World12344431";
-		//发送消息
-		channel.basicPublish("", "queue", null, msg.getBytes());
-		System.out.println("已发送消息" + msg);
+		//创建消息队列
+		channel.queueDeclare("work", true, false, false, null);
+		//发布很多消息
+		for (int i = 0; i < 10000; i++) {
+			String msg = "hello world" + i;
+			channel.basicPublish("", "work", null, msg.getBytes());
+		}
+		System.out.println("消息发送完成");
 		//关闭资源
 		channel.close();
 		connection.close();
